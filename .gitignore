@@ -1,0 +1,27 @@
+# Виртуальное окружение
+venv/
+.env/
+.venv/
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.cache/
+
+*.log
+logs/
+
+.vscode/
+.idea/
+
+*.pyc
+*.pyo
+*.pyd
+
+.DS_Store
+
+.mypy_cache/
+
+*.pid
