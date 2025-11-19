@@ -49,11 +49,11 @@ jobs:
  
             echo "Install finished OK"
             echo "Stopping old Uvicorn..."
-            PID=$($VENV/bin/pgrep -f "uvicorn.*8080" || true)
+            PID=$(sudo lsof -t -i :8080 || true)
             if [ -n "$PID" ]; then
-              echo "Found PID: $PID"
-              kill $PID || true
-              sleep 2
+                echo "Found PID: $PID"
+                kill $PID || true
+                sleep 2
             fi
 
             echo "Starting Uvicorn..."
