@@ -1,4 +1,4 @@
-# README – AWS Homework (Part 1 & Part 2)
+# README – AWS Homework
 
 ## Part 1 — Deploying Application to EC2 using GitHub Actions
 
@@ -111,9 +111,13 @@ GitHub Actions step:
 
 
 ---
+### 8. Extra HomeWork (ECS) (Optional)
+
+A simple Nginx application on AWS ECS using the EC2 launch type, running on a t2.micro instance. Created an ECS cluster, an Auto Scaling Group, a Task Definition, and a Service, which launched the Nginx container on the EC2 instance. Accessed the Nginx page and retrieved instance metadata to confirm the deployment was functioning correctly.
+---
 
 
-### 8.Basic K8s configuration for test fastapi app
+### 9.Basic K8s configuration for test fastapi app
 
 (venv) antonserebrakov@MacBook-Air-Anton aws-pratice % kubectl apply -f k8s/
 
