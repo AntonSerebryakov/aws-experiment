@@ -71,9 +71,7 @@ jobs:
           source: "docker-compose.yml"
           target: "/home/ubuntu/app/"
           overwrite: true
-          debug: true
-
-      
+          debug: true      
 
       - name: Deploy container on EC2 over SSH
         uses: appleboy/ssh-action@v0.1.10
