@@ -5,13 +5,37 @@ on:
     branches: [ main ]
 
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Login to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker image
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/aws-experiment:latest
+          docker build -t "$IMAGE" .
+
+      - name: Push Docker image
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/aws-experiment:latest
+          docker push "$IMAGE"
+
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -19,44 +43,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Copy app files to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "."
-          target: "/home/ubuntu/app"
-
-      - name: Deploy on EC2
+      - name: Deploy container on EC2 over SSH
         uses: appleboy/ssh-action@v0.1.10
+        env:
+            GHCR_PAT: ${{ secrets.GHCR_PAT }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -xe
+
             cd /home/ubuntu/app
-            sudo apt-get update -y
-            sudo apt-get install -y python3-venv python3-pip
+            echo "$GHCR_PAT" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
-            if [ ! -d "venv" ]; then
-              python3 -m venv venv
-            fi
+            docker compose pull
+            docker compose up -d
 
-            source venv/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
- 
-            echo "Install finished OK"
-            echo "Stopping old Uvicorn..."
-            PID=$(sudo lsof -t -i :8080 || true)
-            if [ -n "$PID" ]; then
-                echo "Found PID: $PID"
-                kill $PID || true
-                sleep 2
-            fi
-
-            echo "Starting Uvicorn..."
-            nohup $VENV/bin/uvicorn main:app --host 0.0.0.0 --port 8080 > app.log 2>&1 &
-
-            echo "Uvicorn started."
+            echo "Deploy via docker-compose finished OK"
