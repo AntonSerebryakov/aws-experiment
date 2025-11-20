@@ -53,12 +53,14 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: GHCR_PAT 
           script: |
             set -xe
 
             cd /home/ubuntu/app
 
-            docker login ghcr.io -u "${{ github.repository_owner }}" -p "$GHCR_PAT"
+            echo "$GHCR_PAT" | sudo docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
+
             docker compose pull
             docker compose up -d
 
