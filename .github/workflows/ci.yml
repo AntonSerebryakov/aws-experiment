@@ -58,7 +58,7 @@ jobs:
 
             cd /home/ubuntu/app
 
-            echo "$GHCR_PAT" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
+            echo "$GHCR_PAT" | sudo docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
             docker compose pull
             docker compose up -d
