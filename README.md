@@ -111,3 +111,18 @@ GitHub Actions step:
 
 
 ---
+
+
+### 8.Basic K8s configuration for test fastapi app
+
+(venv) antonserebrakov@MacBook-Air-Anton aws-pratice % kubectl apply -f k8s/
+
+deployment.apps/fastapi-app created
+service/fastapi-service created
+(venv) antonserebrakov@MacBook-Air-Anton aws-pratice % kubectl get pods
+
+NAME                          READY   STATUS              RESTARTS   AGE
+fastapi-app-db4669646-hjxg2   0/1     ContainerCreating   0          13s
+
+
+---
