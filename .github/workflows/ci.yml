@@ -22,12 +22,14 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner,, }}/aws-experiment:latest
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          IMAGE="ghcr.io/$OWNER/aws-experiment:latest"
           docker build -t "$IMAGE" .
 
       - name: Push Docker image
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner,, }}/aws-experiment:latest
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          IMAGE="ghcr.io/$OWNER/aws-experiment:latest"
           docker push "$IMAGE"
 
 
@@ -55,7 +57,11 @@ jobs:
             set -xe
 
             cd /home/ubuntu/app
-            echo "$GHCR_PAT" | docker login ghcr.io -u "${{ github.repository_owner,, }}" --password-stdin
+            OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+            IMAGE="ghcr.io/$OWNER/aws-experiment:latest"
+
+
+            echo "$GHCR_PAT" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
             docker compose pull
             docker compose up -d
