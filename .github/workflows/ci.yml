@@ -41,13 +41,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
       
-      
-      - name: Debug workspace
-        run: |
-          pwd
-          ls -la
-      
-      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -55,6 +48,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       
+      - name: Test AWS via Lambda
+        run: |
+          echo "Invoking Lambda HelloStudentFunction from CI..."
+
+          aws lambda invoke \
+            --function-name HelloStudentFunction \
+            --payload '{"name": "Anton from CI"}' \
+            --cli-binary-format raw-in-base64-out \
+            lambda_response.json
+
+          echo "Raw Lambda response file:"
+          cat lambda_response.json
       
       - name: Copy deploy files (docker-compose.yml)
         uses: appleboy/scp-action@v0.1.7
