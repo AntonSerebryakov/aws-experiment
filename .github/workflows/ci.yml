@@ -57,9 +57,6 @@ jobs:
             set -xe
 
             cd /home/ubuntu/app
-            OWNER="${GITHUB_REPOSITORY_OWNER,,}"
-            IMAGE="ghcr.io/$OWNER/aws-experiment:latest"
-
 
             echo "$GHCR_PAT" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
