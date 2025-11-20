@@ -45,6 +45,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       
+      - name: Debug workspace
+        run: |
+          pwd
+          ls -la
+      
       - name: Copy deploy files (docker-compose.yml)
         uses: appleboy/scp-action@v0.1.7
         with:
